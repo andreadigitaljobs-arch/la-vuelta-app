@@ -25,7 +25,6 @@ function CenterMap({ positions }: { positions: Position[] }) {
 
 export default function MapView({
   positions,
-  isTracking,
 }: {
   positions: Position[];
   isTracking: boolean;

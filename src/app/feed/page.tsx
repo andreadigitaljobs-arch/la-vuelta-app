@@ -1,12 +1,20 @@
 "use client";
 
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import {
+  Clock,
+  Heart,
+  MapPin,
+  MessageCircle,
+  PlusCircle,
+  Trophy,
+  Zap,
+} from "lucide-react";
 import { Navigation } from "@/components/navigation";
 import { useAuth } from "@/components/auth-provider";
-import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { formatDistance, formatDuration, formatPace, formatDate } from "@/lib/utils";
-import { MapPin, Clock, Zap, Heart, MessageCircle, Trophy } from "lucide-react";
-import Link from "next/link";
 
 interface Activity {
   id: string;
@@ -52,8 +60,8 @@ export default function FeedPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-fire flex items-center justify-center">
-        <div className="text-wool font-display text-xl animate-pulse">
+      <div className="flex min-h-screen items-center justify-center bg-fire">
+        <div className="display-title text-2xl text-cream animate-pulse">
           CARGANDO...
         </div>
       </div>
@@ -61,131 +69,143 @@ export default function FeedPage() {
   }
 
   return (
-    <div className="min-h-screen bg-fire">
+    <div className="app-shell">
       <Navigation />
 
-      <main className="pt-14 pb-20">
-        {/* Header ticker */}
-        <div className="bg-wine border-b border-wool/20 py-2 overflow-hidden">
-          <div className="flex whitespace-nowrap ticker-animate">
-            {[...Array(2)].map((_, i) => (
-              <div key={i} className="flex">
-                <span className="font-display text-xs text-wool/70 px-4">
-                  NADIE CORRE CON EGO //
-                </span>
-                <span className="font-display text-xs text-wool/70 px-4">
-                  TODOS LOS RITMOS SE RESPETAN //
-                </span>
-                <span className="font-display text-xs text-wool/70 px-4">
-                  EL NUEVO SE INTEGRA //
-                </span>
-                <span className="font-display text-xs text-wool/70 px-4">
-                  LA COMUNIDAD VA PRIMERO //
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
+      <main className="px-4 pb-24 pt-20">
+        <div className="mx-auto max-w-5xl">
+          <section className="mb-5 overflow-hidden border border-wool/10 bg-wine/88 py-3">
+            <div className="ticker-animate flex whitespace-nowrap">
+              {[...Array(2)].map((_, index) => (
+                <div key={index} className="flex">
+                  {[
+                    "NADIE CORRE CON EGO",
+                    "TODOS LOS RITMOS SE RESPETAN",
+                    "EL NUEVO SE INTEGRA",
+                    "LA COMUNIDAD VA PRIMERO",
+                  ].map((item) => (
+                    <span key={item} className="display-title px-5 text-lg text-wool/80">
+                      {item} {"//"}
+                    </span>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </section>
 
-        {/* Feed */}
-        <div className="max-w-lg mx-auto px-4 py-6">
-          <h2 className="font-display text-2xl text-wool tracking-wider mb-6">
-            ACTIVIDAD RECIENTE
-          </h2>
+          <section className="mb-6 grid gap-4 lg:grid-cols-[1fr_320px]">
+            <div className="brand-panel p-5 sm:p-6">
+              <p className="section-kicker mb-3">Feed social</p>
+              <h1 className="display-title text-5xl text-cream sm:text-7xl">
+                Actividad reciente.
+              </h1>
+              <p className="mt-4 max-w-2xl font-secondary text-sm leading-6 text-wool/68 sm:text-base">
+                Cada carrera suma historia: mapa, ritmo, distancia y el empuje de
+                los que salen contigo.
+              </p>
+            </div>
+            <Link
+              href="/tracker"
+              className="cream-panel flex min-h-40 flex-col justify-between p-5 transition hover:-translate-y-0.5"
+            >
+              <PlusCircle size={28} className="text-wine" />
+              <div>
+                <p className="display-title text-4xl">Grabar vuelta</p>
+                <p className="mt-2 font-secondary text-sm font-semibold text-fire/70">
+                  Inicia el GPS y comparte tu próxima salida.
+                </p>
+              </div>
+            </Link>
+          </section>
 
           {activities.length === 0 ? (
-            <div className="text-center py-16">
-              <div className="w-16 h-16 mx-auto bg-dark/50 rounded-full flex items-center justify-center mb-4">
+            <div className="brand-panel px-5 py-16 text-center">
+              <div className="mx-auto mb-5 flex h-18 w-18 items-center justify-center rounded-full border border-caramel/30 bg-dark/45">
                 <Trophy size={28} className="text-caramel" />
               </div>
-              <p className="font-secondary text-wool/60 text-sm mb-2">
+              <p className="display-title text-4xl text-cream">
                 Aún no hay actividad
               </p>
-              <p className="font-secondary text-wool/40 text-xs mb-6">
-                Sé el primero en compartir tu run
+              <p className="mx-auto mt-2 max-w-sm font-secondary text-sm text-wool/58">
+                Sé el primero en compartir tu run y encender el feed del club.
               </p>
-              <Link
-                href="/tracker"
-                className="inline-block bg-wine hover:bg-wine-light text-wool font-secondary font-bold uppercase tracking-widest py-3 px-8 text-sm transition-all"
-              >
-                GRABAR ACTIVIDAD
+              <Link href="/tracker" className="brand-button mt-7">
+                Grabar actividad
               </Link>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="grid gap-4 lg:grid-cols-2">
               {activities.map((activity) => (
-                <div
-                  key={activity.id}
-                  className="activity-card bg-dark/40 border border-chestnut/50 p-4"
-                >
-                  {/* User header */}
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 bg-chestnut rounded-full flex items-center justify-center">
-                      <span className="font-display text-sm text-wool">
+                <article key={activity.id} className="activity-card brand-panel overflow-hidden">
+                  <div className="flex items-start gap-3 border-b border-wool/10 p-4">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-caramel/30 bg-chestnut">
+                      <span className="font-display text-base text-cream">
                         {activity.profiles?.full_name?.charAt(0) || "U"}
                       </span>
                     </div>
-                    <div>
-                      <p className="font-secondary font-semibold text-wool text-sm">
+                    <div className="min-w-0">
+                      <p className="truncate font-secondary text-sm font-bold text-cream">
                         {activity.profiles?.full_name || "Runner"}
                       </p>
-                      <p className="font-secondary text-wool/40 text-xs">
+                      <p className="font-secondary text-xs text-wool/42">
                         @{activity.profiles?.username || "runner"} ·{" "}
                         {formatDate(activity.created_at)}
                       </p>
                     </div>
-                    <span className="ml-auto bg-wine/30 text-caramel font-display text-xs px-3 py-1 uppercase">
+                    <span className="ml-auto border border-caramel/25 bg-wine/35 px-3 py-1 font-secondary text-[10px] font-bold uppercase tracking-[0.16em] text-caramel">
                       {activity.type}
                     </span>
                   </div>
 
-                  {/* Stats grid */}
-                  <div className="grid grid-cols-3 gap-3 mb-3">
-                    <div className="text-center">
-                      <p className="font-display text-xl text-wool">
-                        {formatDistance(activity.distance)}
-                      </p>
-                      <p className="font-secondary text-[10px] text-wool/40 uppercase tracking-wider">
-                        Distancia
-                      </p>
+                  <div className="p-4">
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="metric-card p-3">
+                        <MapPin size={15} className="mb-2 text-caramel" />
+                        <p className="display-title text-2xl text-cream">
+                          {formatDistance(activity.distance)}
+                        </p>
+                        <p className="font-secondary text-[9px] uppercase tracking-[0.15em] text-wool/42">
+                          Distancia
+                        </p>
+                      </div>
+                      <div className="metric-card p-3">
+                        <Clock size={15} className="mb-2 text-caramel" />
+                        <p className="display-title text-2xl text-cream">
+                          {formatDuration(activity.duration)}
+                        </p>
+                        <p className="font-secondary text-[9px] uppercase tracking-[0.15em] text-wool/42">
+                          Tiempo
+                        </p>
+                      </div>
+                      <div className="metric-card p-3">
+                        <Zap size={15} className="mb-2 text-caramel" />
+                        <p className="display-title text-2xl text-caramel">
+                          {formatPace(activity.avg_pace)}
+                        </p>
+                        <p className="font-secondary text-[9px] uppercase tracking-[0.15em] text-wool/42">
+                          Ritmo/km
+                        </p>
+                      </div>
                     </div>
-                    <div className="text-center border-x border-chestnut/30">
-                      <p className="font-display text-xl text-wool">
-                        {formatDuration(activity.duration)}
+
+                    {activity.notes && (
+                      <p className="mt-4 border-l-2 border-caramel/55 pl-3 font-secondary text-sm leading-6 text-wool/72">
+                        {activity.notes}
                       </p>
-                      <p className="font-secondary text-[10px] text-wool/40 uppercase tracking-wider">
-                        Tiempo
-                      </p>
-                    </div>
-                    <div className="text-center">
-                      <p className="font-display text-xl text-caramel">
-                        {formatPace(activity.avg_pace)}
-                      </p>
-                      <p className="font-secondary text-[10px] text-wool/40 uppercase tracking-wider">
-                        Ritmo/km
-                      </p>
+                    )}
+
+                    <div className="mt-4 flex items-center gap-5 border-t border-wool/10 pt-3">
+                      <button className="flex items-center gap-1.5 font-secondary text-xs font-semibold text-wool/44 transition-colors hover:text-caramel">
+                        <Heart size={16} />
+                        Me gusta
+                      </button>
+                      <button className="flex items-center gap-1.5 font-secondary text-xs font-semibold text-wool/44 transition-colors hover:text-caramel">
+                        <MessageCircle size={16} />
+                        Comentar
+                      </button>
                     </div>
                   </div>
-
-                  {/* Notes */}
-                  {activity.notes && (
-                    <p className="font-secondary text-wool/70 text-sm mb-3 border-t border-chestnut/30 pt-3">
-                      {activity.notes}
-                    </p>
-                  )}
-
-                  {/* Actions */}
-                  <div className="flex items-center gap-6 border-t border-chestnut/30 pt-3">
-                    <button className="flex items-center gap-1.5 text-wool/40 hover:text-wine transition-colors">
-                      <Heart size={16} />
-                      <span className="font-secondary text-xs">Me gusta</span>
-                    </button>
-                    <button className="flex items-center gap-1.5 text-wool/40 hover:text-caramel transition-colors">
-                      <MessageCircle size={16} />
-                      <span className="font-secondary text-xs">Comentar</span>
-                    </button>
-                  </div>
-                </div>
+                </article>
               ))}
             </div>
           )}

@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function RegisterPage() {
   const [fullName, setFullName] = useState("");
@@ -18,8 +19,8 @@ export default function RegisterPage() {
   const router = useRouter();
   const supabase = createClient();
 
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleRegister = async (event: React.FormEvent) => {
+    event.preventDefault();
     setError("");
     setLoading(true);
 
@@ -61,129 +62,134 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-fire flex flex-col items-center justify-center px-6">
-      <div className="w-full max-w-sm">
-        {/* Logo */}
-        <div className="text-center mb-10">
-          <div className="w-20 h-20 mx-auto bg-wine rounded-full flex items-center justify-center border-2 border-caramel mb-4">
-            <span className="font-display text-3xl text-wool">LV</span>
-          </div>
-          <h1 className="font-display text-3xl text-wool tracking-wider">
-            LA VUELTA
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-dark px-5 py-8 text-cream">
+      <Image
+        src="/brand/hero-bg-v3.png"
+        alt="La Vuelta Running Co."
+        fill
+        priority
+        className="object-cover"
+        sizes="100vw"
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-fire/86 via-dark/72 to-dark" />
+
+      <div className="relative z-10 grid w-full max-w-5xl items-center gap-8 lg:grid-cols-[1fr_430px]">
+        <section className="hidden lg:block">
+          <p className="section-kicker mb-4">Únete al club</p>
+          <h1 className="display-title max-w-2xl text-8xl">
+            La vuelta se da juntos.
           </h1>
-          <p className="font-secondary text-xs text-wool/50 tracking-widest mt-1">
-            UNETE A LA COMUNIDAD
+          <p className="mt-6 max-w-lg font-secondary text-lg leading-8 text-wool/76">
+            Crea tu perfil, graba tus actividades y empieza a aparecer en el ranking
+            de la comunidad.
           </p>
-        </div>
+        </section>
 
-        {/* Google Sign In */}
-        <button
-          onClick={handleGoogleLogin}
-          disabled={googleLoading}
-          className="w-full bg-white hover:bg-gray-100 disabled:opacity-50 text-gray-800 font-secondary font-semibold py-3.5 flex items-center justify-center gap-3 transition-all text-sm mb-4"
-        >
-          <svg className="w-5 h-5" viewBox="0 0 24 24">
-            <path
-              fill="#4285F4"
-              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
-            />
-            <path
-              fill="#34A853"
-              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-            />
-            <path
-              fill="#FBBC05"
-              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-            />
-            <path
-              fill="#EA4335"
-              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-            />
-          </svg>
-          {googleLoading ? "CONECTANDO..." : "REGISTRARSE CON GOOGLE"}
-        </button>
-
-        {/* Divider */}
-        <div className="flex items-center gap-4 my-6">
-          <div className="flex-1 h-px bg-chestnut/50" />
-          <span className="font-secondary text-xs text-wool/30 uppercase">
-            o
-          </span>
-          <div className="flex-1 h-px bg-chestnut/50" />
-        </div>
-
-        <form onSubmit={handleRegister} className="space-y-4">
-          {error && (
-            <div className="bg-wine/20 border border-wine text-caramel text-sm p-3 rounded">
-              {error}
+        <section className="brand-panel w-full p-5 sm:p-7">
+          <div className="mb-7 text-center">
+            <div className="relative mx-auto mb-4 h-20 w-20 overflow-hidden rounded-full border border-caramel/45 bg-dark">
+              <Image
+                src="/brand/logo-round.png"
+                alt="Logo La Vuelta"
+                fill
+                className="object-cover"
+                sizes="80px"
+              />
             </div>
-          )}
-
-          <input
-            type="text"
-            placeholder="Nombre completo"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            required
-            className="w-full bg-dark/50 border border-chestnut text-wool placeholder-wool/40 px-4 py-3 font-secondary text-sm focus:outline-none focus:border-caramel transition-colors"
-          />
-
-          <input
-            type="text"
-            placeholder="Nombre de usuario"
-            value={username}
-            onChange={(e) => setUsername(e.target.value.replace(/\s/g, "").toLowerCase())}
-            required
-            className="w-full bg-dark/50 border border-chestnut text-wool placeholder-wool/40 px-4 py-3 font-secondary text-sm focus:outline-none focus:border-caramel transition-colors"
-          />
-
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full bg-dark/50 border border-chestnut text-wool placeholder-wool/40 px-4 py-3 font-secondary text-sm focus:outline-none focus:border-caramel transition-colors"
-          />
-
-          <div className="relative">
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Contraseña (mínimo 6 caracteres)"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              className="w-full bg-dark/50 border border-chestnut text-wool placeholder-wool/40 px-4 py-3 pr-12 font-secondary text-sm focus:outline-none focus:border-caramel transition-colors"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-wool/40 hover:text-wool"
-            >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
+            <h1 className="display-title text-4xl">LA VUELTA</h1>
+            <p className="font-secondary text-xs font-bold uppercase tracking-[0.24em] text-caramel">
+              Crear cuenta
+            </p>
           </div>
 
           <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-wine hover:bg-wine-light disabled:opacity-50 text-wool font-secondary font-bold uppercase tracking-widest py-3.5 transition-all text-sm"
+            onClick={handleGoogleLogin}
+            disabled={googleLoading}
+            className="mb-5 flex w-full items-center justify-center gap-3 bg-cream px-4 py-3.5 font-secondary text-sm font-bold uppercase tracking-[0.08em] text-fire transition hover:bg-wool disabled:opacity-50"
           >
-            {loading ? "CREANDO CUENTA..." : "CREAR CUENTA"}
+            <svg className="h-5 w-5" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+            </svg>
+            {googleLoading ? "Conectando..." : "Registrarse con Google"}
           </button>
-        </form>
 
-        <div className="text-center mt-6">
-          <Link
-            href="/login"
-            className="text-wool/50 hover:text-caramel font-secondary text-sm transition-colors"
-          >
+          <div className="mb-5 flex items-center gap-4">
+            <div className="h-px flex-1 bg-wool/14" />
+            <span className="font-secondary text-xs uppercase tracking-[0.18em] text-wool/42">
+              o
+            </span>
+            <div className="h-px flex-1 bg-wool/14" />
+          </div>
+
+          <form onSubmit={handleRegister} className="space-y-4">
+            {error && (
+              <div className="border border-caramel/40 bg-wine/25 p-3 font-secondary text-sm text-cream">
+                {error}
+              </div>
+            )}
+
+            <input
+              type="text"
+              placeholder="Nombre completo"
+              value={fullName}
+              onChange={(event) => setFullName(event.target.value)}
+              required
+              className="brand-input"
+            />
+            <input
+              type="text"
+              placeholder="Nombre de usuario"
+              value={username}
+              onChange={(event) =>
+                setUsername(event.target.value.replace(/\s/g, "").toLowerCase())
+              }
+              required
+              className="brand-input"
+            />
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              required
+              className="brand-input"
+            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Contraseña (mínimo 6 caracteres)"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                required
+                minLength={6}
+                className="brand-input pr-12"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-wool/48 transition hover:text-cream"
+                aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+
+            <button type="submit" disabled={loading} className="brand-button w-full">
+              {loading ? "Creando cuenta..." : "Crear cuenta"}
+            </button>
+          </form>
+
+          <div className="mt-7 text-center font-secondary text-sm text-wool/62">
             ¿Ya tienes cuenta?{" "}
-            <span className="font-semibold text-caramel">Inicia sesión</span>
-          </Link>
-        </div>
+            <Link href="/login" className="font-bold text-caramel hover:text-cream">
+              Inicia sesión
+            </Link>
+          </div>
+        </section>
       </div>
-    </div>
+    </main>
   );
 }

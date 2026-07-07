@@ -5,14 +5,14 @@ import { useAuth } from "@/components/auth-provider";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { formatDistance, formatDuration, formatPace } from "@/lib/utils";
-import { Play, Pause, Square, MapPin, Clock, Zap, Navigation2 } from "lucide-react";
+import { Clock, MapPin, Pause, Play, Square, Zap } from "lucide-react";
 import dynamic from "next/dynamic";
 
 const MapView = dynamic(() => import("@/components/map-view"), {
   ssr: false,
   loading: () => (
-    <div className="h-full bg-dark/50 flex items-center justify-center">
-      <p className="text-wool/40 font-secondary text-sm">Cargando mapa...</p>
+    <div className="flex h-full items-center justify-center bg-dark/70">
+      <p className="font-secondary text-sm text-wool/45">Cargando mapa...</p>
     </div>
   ),
 });
@@ -164,47 +164,59 @@ export default function TrackerPage() {
   const avgPace = distance > 0 && elapsedTime > 0 ? elapsedTime / (distance / 1000) : 0;
 
   return (
-    <div className="min-h-screen bg-fire">
+    <div className="min-h-screen bg-dark">
       <Navigation />
 
-      <main className="pt-14 pb-20 h-screen flex flex-col">
-        {/* Map */}
-        <div className="flex-1 relative">
+      <main className="flex h-screen flex-col pb-[72px] pt-16">
+        <div className="relative flex-1 overflow-hidden">
           <MapView positions={positions} isTracking={isTracking} />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-dark/65 via-transparent to-dark/82" />
 
-          {/* Live stats overlay */}
-          {isTracking && (
-            <div className="absolute top-4 left-4 right-4 bg-dark/80 backdrop-blur-sm border border-chestnut p-3">
-              <div className="grid grid-cols-3 gap-2 text-center">
+          <div className="absolute left-4 right-4 top-4">
+            <div className="brand-panel p-4">
+              <div className="mb-3 flex items-center justify-between">
                 <div>
-                  <p className="font-display text-2xl text-wool">
+                  <p className="section-kicker">Tracker GPS</p>
+                  <h1 className="display-title text-4xl text-cream">
+                    {isTracking ? (isPaused ? "Pausado" : "En vivo") : "Nueva vuelta"}
+                  </h1>
+                </div>
+                <div className="flex h-10 w-10 items-center justify-center rounded-full border border-caramel/30 bg-wine/35">
+                  <MapPin size={18} className="text-caramel" />
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                <div className="metric-card p-3">
+                  <MapPin size={14} className="mb-1 text-caramel" />
+                  <p className="display-title text-2xl text-cream">
                     {formatDistance(distance)}
                   </p>
-                  <p className="font-secondary text-[9px] text-wool/40 uppercase">
+                  <p className="font-secondary text-[9px] uppercase tracking-[0.15em] text-wool/42">
                     Distancia
                   </p>
                 </div>
-                <div className="border-x border-chestnut/50">
-                  <p className="font-display text-2xl text-wool">
+                <div className="metric-card p-3">
+                  <Clock size={14} className="mb-1 text-caramel" />
+                  <p className="display-title text-2xl text-cream">
                     {formatDuration(elapsedTime)}
                   </p>
-                  <p className="font-secondary text-[9px] text-wool/40 uppercase">
+                  <p className="font-secondary text-[9px] uppercase tracking-[0.15em] text-wool/42">
                     Tiempo
                   </p>
                 </div>
-                <div>
-                  <p className="font-display text-2xl text-caramel">
+                <div className="metric-card p-3">
+                  <Zap size={14} className="mb-1 text-caramel" />
+                  <p className="display-title text-2xl text-caramel">
                     {avgPace > 0 ? formatPace(1000 / avgPace) : "0:00"}
                   </p>
-                  <p className="font-secondary text-[9px] text-wool/40 uppercase">
+                  <p className="font-secondary text-[9px] uppercase tracking-[0.15em] text-wool/42">
                     Ritmo/km
                   </p>
                 </div>
               </div>
             </div>
-          )}
+          </div>
 
-          {/* Position indicator */}
           {isTracking && (
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
               <div className="relative">
@@ -215,56 +227,55 @@ export default function TrackerPage() {
           )}
         </div>
 
-        {/* Controls */}
-        <div className="bg-dark border-t border-chestnut p-4">
+        <div className="border-t border-wool/10 bg-dark/96 p-4">
           {!isTracking ? (
             <button
               onClick={startTracking}
-              className="w-full bg-wine hover:bg-wine-light text-wool font-secondary font-bold uppercase tracking-widest py-4 flex items-center justify-center gap-3 transition-all"
+              className="brand-button w-full py-4"
             >
               <Play size={20} fill="currentColor" />
-              INICIAR CARRERA
+              Iniciar carrera
             </button>
           ) : (
             <div className="space-y-3">
               <div className="flex gap-3">
                 <button
                   onClick={pauseTracking}
-                  className="flex-1 bg-chestnut hover:bg-chestnut/80 text-wool font-secondary font-semibold uppercase tracking-wider py-3 flex items-center justify-center gap-2 transition-all text-sm"
+                  className="ghost-button flex-1 py-3"
                 >
                   {isPaused ? (
                     <>
-                      <Play size={16} /> CONTINUAR
+                      <Play size={16} /> Continuar
                     </>
                   ) : (
                     <>
-                      <Pause size={16} /> PAUSAR
+                      <Pause size={16} /> Pausar
                     </>
                   )}
                 </button>
                 <button
                   onClick={stopTracking}
-                  className="flex-1 bg-wine hover:bg-wine-light text-wool font-secondary font-semibold uppercase tracking-wider py-3 flex items-center justify-center gap-2 transition-all text-sm"
+                  className="brand-button flex-1 py-3"
                 >
-                  <Square size={16} /> DETENER
+                  <Square size={16} /> Detener
                 </button>
               </div>
 
               {distance > 10 && !isPaused && (
-                <div className="space-y-3 pt-2 border-t border-chestnut/50">
+                <div className="space-y-3 border-t border-wool/10 pt-3">
                   <input
                     type="text"
                     placeholder="Agregar nota (opcional)"
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    className="w-full bg-dark/50 border border-chestnut text-wool placeholder-wool/40 px-4 py-2.5 font-secondary text-sm focus:outline-none focus:border-caramel transition-colors"
+                    className="brand-input"
                   />
                   <button
                     onClick={saveActivity}
                     disabled={saving}
-                    className="w-full bg-caramel hover:bg-caramel/80 disabled:opacity-50 text-fire font-secondary font-bold uppercase tracking-widest py-3 transition-all text-sm"
+                    className="w-full bg-caramel px-4 py-3 font-secondary text-sm font-extrabold uppercase tracking-[0.14em] text-fire transition hover:bg-wool disabled:opacity-50"
                   >
-                    {saving ? "GUARDANDO..." : "GUARDAR ACTIVIDAD"}
+                    {saving ? "Guardando..." : "Guardar actividad"}
                   </button>
                 </div>
               )}

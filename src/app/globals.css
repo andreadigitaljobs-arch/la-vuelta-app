@@ -2,14 +2,14 @@
 @import "leaflet/dist/leaflet.css";
 
 @theme inline {
-  --color-fire: #52130C;
+  --color-fire: #52130c;
   --color-fire-light: #6b1a10;
-  --color-wool: #C4BAB3;
+  --color-wool: #c4bab3;
   --color-wine: #741717;
   --color-wine-light: #922424;
-  --color-caramel: #BD695D;
-  --color-chestnut: #603A30;
-  --color-cream: #F4EFEA;
+  --color-caramel: #bd695d;
+  --color-chestnut: #603a30;
+  --color-cream: #f4efea;
   --color-dark: #111111;
 
   --font-display: "Anton", sans-serif;
@@ -18,76 +18,253 @@
 }
 
 :root {
-  --background: #52130C;
-  --foreground: #C4BAB3;
+  --background: #52130c;
+  --foreground: #c4bab3;
 }
 
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
 }
 
 html {
   scroll-behavior: smooth;
+  scrollbar-color: var(--color-wine) #111111;
+  scrollbar-width: thin;
 }
 
 body {
-  background: var(--background);
+  min-height: 100vh;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 12% 4%, rgba(189, 105, 93, 0.28), transparent 28rem),
+    radial-gradient(circle at 100% 0%, rgba(116, 23, 23, 0.34), transparent 24rem),
+    linear-gradient(180deg, #52130c 0%, #2a0c08 48%, #111111 100%);
   color: var(--foreground);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
-  min-height: 100vh;
 }
 
-/* Custom Scrollbar */
+button,
+a,
+input,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
+
 ::-webkit-scrollbar-track {
-  background: #1a1a1a;
+  background: #111111;
 }
+
 ::-webkit-scrollbar-thumb {
   background-color: var(--color-wine);
-  border-radius: 4px;
+  border-radius: 999px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background-color: var(--color-caramel);
 }
 
-/* Leaflet Map Overrides */
+::selection {
+  background: var(--color-caramel);
+  color: var(--color-fire);
+}
+
+.app-shell {
+  min-height: 100vh;
+  background:
+    linear-gradient(180deg, rgba(82, 19, 12, 0.92), rgba(17, 17, 17, 0.96)),
+    url("/brand/origen-bg-desktop.png") center top / cover fixed;
+}
+
+.brand-panel {
+  border: 1px solid rgba(196, 186, 179, 0.14);
+  background:
+    linear-gradient(135deg, rgba(244, 239, 234, 0.08), rgba(96, 58, 48, 0.24)),
+    rgba(17, 17, 17, 0.58);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(18px);
+}
+
+.cream-panel {
+  border: 1px solid rgba(96, 58, 48, 0.22);
+  background: #f4efea;
+  color: #52130c;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.24);
+}
+
+.metric-card {
+  border: 1px solid rgba(196, 186, 179, 0.12);
+  background:
+    linear-gradient(180deg, rgba(196, 186, 179, 0.09), rgba(17, 17, 17, 0.18)),
+    rgba(17, 17, 17, 0.52);
+}
+
+.brand-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  border: 1px solid rgba(196, 186, 179, 0.18);
+  background: linear-gradient(135deg, #922424, #741717 58%, #52130c);
+  color: #f4efea;
+  font-family: var(--font-secondary);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  padding: 0.95rem 1.2rem;
+  text-transform: uppercase;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+  box-shadow: 0 14px 34px rgba(116, 23, 23, 0.35);
+}
+
+.brand-button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(196, 186, 179, 0.34);
+  box-shadow: 0 18px 42px rgba(116, 23, 23, 0.48);
+}
+
+.brand-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
+}
+
+.ghost-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  border: 1px solid rgba(196, 186, 179, 0.22);
+  background: rgba(17, 17, 17, 0.26);
+  color: rgba(244, 239, 234, 0.86);
+  font-family: var(--font-secondary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  padding: 0.85rem 1rem;
+  text-transform: uppercase;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+.ghost-button:hover {
+  border-color: rgba(196, 186, 179, 0.48);
+  background: rgba(244, 239, 234, 0.08);
+  color: #f4efea;
+}
+
+.brand-input {
+  width: 100%;
+  border: 1px solid rgba(196, 186, 179, 0.16);
+  background: rgba(17, 17, 17, 0.45);
+  color: #f4efea;
+  font-family: var(--font-secondary);
+  font-size: 0.92rem;
+  outline: none;
+  padding: 0.95rem 1rem;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.brand-input::placeholder {
+  color: rgba(196, 186, 179, 0.48);
+}
+
+.brand-input:focus {
+  border-color: rgba(189, 105, 93, 0.86);
+  background: rgba(17, 17, 17, 0.62);
+  box-shadow: 0 0 0 3px rgba(189, 105, 93, 0.14);
+}
+
+.section-kicker {
+  font-family: var(--font-secondary);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #bd695d;
+}
+
+.display-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  line-height: 0.96;
+  text-transform: uppercase;
+}
+
+.activity-card {
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+}
+
+.activity-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(189, 105, 93, 0.48);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.26);
+}
+
 .leaflet-container {
   height: 100%;
   width: 100%;
-  border-radius: 12px;
+  background: #111111;
 }
 
-/* Activity tracking pulse animation */
+.leaflet-control-attribution {
+  background: rgba(17, 17, 17, 0.56) !important;
+  color: rgba(196, 186, 179, 0.58) !important;
+  font-family: var(--font-secondary);
+}
+
+.leaflet-control-attribution a {
+  color: rgba(244, 239, 234, 0.72) !important;
+}
+
 @keyframes pulse-ring {
-  0% { transform: scale(0.8); opacity: 1; }
-  100% { transform: scale(2.5); opacity: 0; }
+  0% {
+    opacity: 1;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.5);
+  }
 }
 
 .pulse-ring {
   animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
 }
 
-/* Ticker animation */
 @keyframes ticker {
-  0% { transform: translate3d(0, 0, 0); }
-  100% { transform: translate3d(-50%, 0, 0); }
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
 }
 
 .ticker-animate {
   animation: ticker 20s linear infinite;
 }
 
-/* Activity card hover */
-.activity-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.activity-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+@media (max-width: 768px) {
+  .app-shell {
+    background:
+      linear-gradient(180deg, rgba(82, 19, 12, 0.9), rgba(17, 17, 17, 0.97)),
+      url("/brand/hero-bg-mobile-v3.png") center top / cover fixed;
+  }
 }

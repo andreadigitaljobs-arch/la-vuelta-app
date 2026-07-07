@@ -1,13 +1,12 @@
 "use client";
 
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Clock, Flame, MapPin, Plus, TrendingUp, Zap } from "lucide-react";
 import { Navigation } from "@/components/navigation";
 import { useAuth } from "@/components/auth-provider";
-import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { formatDistance, formatDuration, formatPace, formatDate } from "@/lib/utils";
-import { MapPin, Clock, Zap, TrendingUp } from "lucide-react";
-import Link from "next/link";
-import { Plus } from "lucide-react";
 
 interface Activity {
   id: string;
@@ -44,11 +43,14 @@ export default function ActivitiesPage() {
 
       if (data) {
         setActivities(data as Activity[]);
-        const totalDist = data.reduce((sum, a) => sum + a.distance, 0);
-        const totalCals = data.reduce((sum, a) => sum + (a.calories || 0), 0);
+        const totalDist = data.reduce((sum, activity) => sum + activity.distance, 0);
+        const totalCals = data.reduce(
+          (sum, activity) => sum + (activity.calories || 0),
+          0
+        );
         const avgP =
           data.length > 0
-            ? data.reduce((sum, a) => sum + a.avg_pace, 0) / data.length
+            ? data.reduce((sum, activity) => sum + activity.avg_pace, 0) / data.length
             : 0;
         setStats({
           totalDistance: totalDist,
@@ -65,8 +67,8 @@ export default function ActivitiesPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-fire flex items-center justify-center">
-        <div className="text-wool font-display text-xl animate-pulse">
+      <div className="flex min-h-screen items-center justify-center bg-fire">
+        <div className="display-title text-2xl text-cream animate-pulse">
           CARGANDO...
         </div>
       </div>
@@ -74,132 +76,116 @@ export default function ActivitiesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-fire">
+    <div className="app-shell">
       <Navigation />
 
-      <main className="pt-14 pb-20">
-        {/* Stats summary */}
-        <div className="bg-dark/50 border-b border-chestnut p-4">
-          <div className="max-w-lg mx-auto">
-            <h2 className="font-display text-lg text-wool tracking-wider mb-4">
-              MI RESUMEN
-            </h2>
-            <div className="grid grid-cols-4 gap-3">
-              <div className="text-center">
-                <TrendingUp size={16} className="mx-auto text-caramel mb-1" />
-                <p className="font-display text-lg text-wool">
-                  {formatDistance(stats.totalDistance)}
-                </p>
-                <p className="font-secondary text-[9px] text-wool/40 uppercase">
-                  Total
-                </p>
+      <main className="px-4 pb-24 pt-20">
+        <div className="mx-auto max-w-5xl">
+          <section className="brand-panel mb-5 p-5 sm:p-6">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="section-kicker mb-3">Tu bitácora</p>
+                <h1 className="display-title text-5xl text-cream sm:text-7xl">
+                  Mis actividades.
+                </h1>
               </div>
-              <div className="text-center">
-                <MapPin size={16} className="mx-auto text-caramel mb-1" />
-                <p className="font-display text-lg text-wool">{stats.totalRuns}</p>
-                <p className="font-secondary text-[9px] text-wool/40 uppercase">
-                  Carreras
-                </p>
-              </div>
-              <div className="text-center">
-                <Zap size={16} className="mx-auto text-caramel mb-1" />
-                <p className="font-display text-lg text-caramel">
-                  {stats.avgPace > 0 ? formatPace(1000 / stats.avgPace) : "0:00"}
-                </p>
-                <p className="font-secondary text-[9px] text-wool/40 uppercase">
-                  Ritmo medio
-                </p>
-              </div>
-              <div className="text-center">
-                <Clock size={16} className="mx-auto text-caramel mb-1" />
-                <p className="font-display text-lg text-wool">
-                  {stats.totalCalories}
-                </p>
-                <p className="font-secondary text-[9px] text-wool/40 uppercase">
-                  Calorías
-                </p>
-              </div>
+              <Link href="/tracker" className="brand-button shrink-0 px-4">
+                <Plus size={18} />
+                <span className="hidden sm:inline">Nueva</span>
+              </Link>
             </div>
-          </div>
-        </div>
+          </section>
 
-        {/* Activities list */}
-        <div className="max-w-lg mx-auto px-4 py-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="font-display text-xl text-wool tracking-wider">
-              MIS ACTIVIDADES
-            </h2>
-            <Link
-              href="/tracker"
-              className="bg-wine hover:bg-wine-light text-wool p-2 transition-all"
-            >
-              <Plus size={20} />
-            </Link>
-          </div>
+          <section className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+            {[
+              {
+                icon: TrendingUp,
+                label: "Total",
+                value: formatDistance(stats.totalDistance),
+                accent: false,
+              },
+              { icon: MapPin, label: "Carreras", value: stats.totalRuns, accent: false },
+              {
+                icon: Zap,
+                label: "Ritmo medio",
+                value: stats.avgPace > 0 ? formatPace(1000 / stats.avgPace) : "0:00",
+                accent: true,
+              },
+              { icon: Flame, label: "Calorías", value: stats.totalCalories, accent: false },
+            ].map((item) => (
+              <div key={item.label} className="metric-card p-4">
+                <item.icon size={18} className="mb-3 text-caramel" />
+                <p className={`display-title text-3xl ${item.accent ? "text-caramel" : "text-cream"}`}>
+                  {item.value}
+                </p>
+                <p className="font-secondary text-[10px] font-bold uppercase tracking-[0.16em] text-wool/42">
+                  {item.label}
+                </p>
+              </div>
+            ))}
+          </section>
 
           {activities.length === 0 ? (
-            <div className="text-center py-16">
-              <p className="font-secondary text-wool/60 text-sm mb-4">
+            <div className="brand-panel px-5 py-16 text-center">
+              <p className="display-title text-4xl text-cream">
                 Aún no tienes actividades
               </p>
-              <Link
-                href="/tracker"
-                className="inline-block bg-wine hover:bg-wine-light text-wool font-secondary font-bold uppercase tracking-widest py-3 px-8 text-sm transition-all"
-              >
-                PRIMERA CARRERA
+              <p className="mx-auto mt-2 max-w-sm font-secondary text-sm text-wool/58">
+                Graba tu primera vuelta y empieza a construir tu historial.
+              </p>
+              <Link href="/tracker" className="brand-button mt-7">
+                Primera carrera
               </Link>
             </div>
           ) : (
             <div className="space-y-3">
               {activities.map((activity) => (
-                <div
-                  key={activity.id}
-                  className="activity-card bg-dark/40 border border-chestnut/50 p-4"
-                >
-                  <div className="flex items-start justify-between mb-3">
+                <article key={activity.id} className="activity-card brand-panel p-4">
+                  <div className="mb-4 flex items-start justify-between gap-3">
                     <div>
-                      <span className="bg-wine/30 text-caramel font-display text-xs px-2 py-0.5 uppercase">
+                      <span className="border border-caramel/25 bg-wine/35 px-3 py-1 font-secondary text-[10px] font-bold uppercase tracking-[0.16em] text-caramel">
                         {activity.type}
                       </span>
-                      <p className="font-secondary text-wool/40 text-xs mt-1">
+                      <p className="mt-2 font-secondary text-xs text-wool/42">
                         {formatDate(activity.created_at)}
                       </p>
                     </div>
+                    <Clock size={18} className="text-caramel" />
                   </div>
 
                   <div className="grid grid-cols-3 gap-3">
                     <div>
-                      <p className="font-display text-lg text-wool">
+                      <p className="display-title text-3xl text-cream">
                         {formatDistance(activity.distance)}
                       </p>
-                      <p className="font-secondary text-[9px] text-wool/40 uppercase">
+                      <p className="font-secondary text-[10px] uppercase tracking-[0.15em] text-wool/42">
                         Distancia
                       </p>
                     </div>
-                    <div className="border-x border-chestnut/30 text-center">
-                      <p className="font-display text-lg text-wool">
+                    <div className="border-x border-wool/10 text-center">
+                      <p className="display-title text-3xl text-cream">
                         {formatDuration(activity.duration)}
                       </p>
-                      <p className="font-secondary text-[9px] text-wool/40 uppercase">
+                      <p className="font-secondary text-[10px] uppercase tracking-[0.15em] text-wool/42">
                         Tiempo
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-display text-lg text-caramel">
+                      <p className="display-title text-3xl text-caramel">
                         {formatPace(activity.avg_pace)}
                       </p>
-                      <p className="font-secondary text-[9px] text-wool/40 uppercase">
+                      <p className="font-secondary text-[10px] uppercase tracking-[0.15em] text-wool/42">
                         Ritmo/km
                       </p>
                     </div>
                   </div>
 
                   {activity.notes && (
-                    <p className="font-secondary text-wool/60 text-xs mt-2 pt-2 border-t border-chestnut/30">
+                    <p className="mt-4 border-t border-wool/10 pt-3 font-secondary text-sm leading-6 text-wool/66">
                       {activity.notes}
                     </p>
                   )}
-                </div>
+                </article>
               ))}
             </div>
           )}
